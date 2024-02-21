@@ -1,14 +1,22 @@
+const pool = require('../db');
 
-
-const getAllTasks =  (req, res) => {
+const getAllTasks = (req, res) => {
     res.send('Get all tasks');
 };
 
-const postTask = (req, res) => {
-    const task = req.body;
-    console.log(task);
-    
-    res.send('Create a new task');
+const postTask = async (req, res) => {
+    const { tittle, description } = req.body;
+
+    try {
+        console.log(tittle, description);
+
+        const result = await pool.query('INSERT INTO task (tittle, description) VALUES ($1, $2)', [tittle, description]);
+
+        res.json(result.rows[0]);
+        console.log(result);
+    } catch (err) {
+        res.json({ error: err.message });
+    }
 };
 
 const getTaskById = (req, res) => {
@@ -23,7 +31,7 @@ const updateTask = (req, res) => {
     res.send('Update a task');
 };
 
-module.exports = {  
+module.exports = {
     getAllTasks,
     postTask,
     getTaskById,
